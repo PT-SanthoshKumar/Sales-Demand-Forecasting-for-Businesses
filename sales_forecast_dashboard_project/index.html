@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SalesPulse - Forecast Intelligence</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="scripts.js" defer></script>
+</head>
+<body>
+<div class="page-wrap">
+  <header>
+    <div class="logo-group">
+      <div class="logo-mark">SP</div>
+      <div class="logo-text">
+        <h1>SalesPulse</h1>
+        <span>Demand Forecasting Workspace</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="badge-live">Model active</div>
+      <nav class="nav-pills" aria-label="Dashboard views">
+        <button class="nav-pill active">Overview</button>
+        <button class="nav-pill">Products</button>
+        <button class="nav-pill">Regions</button>
+        <button class="nav-pill">Reports</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero-band">
+    <div>
+      <p class="eyebrow">Forecast model</p>
+      <h2>Future sales and demand planning from historical revenue trends.</h2>
+      <p class="hero-copy">A seasonal year-over-year growth model uses lag-12 demand and monthly seasonality to produce a 12-month sales forecast with validation metrics.</p>
+    </div>
+    <div class="model-strip" aria-label="Model configuration summary">
+      <div><span>Horizon</span><strong>12 months</strong></div>
+      <div><span>Features</span><strong>Lag-12 + Seasonality</strong></div>
+      <div><span>Validation</span><strong>6-month holdout</strong></div>
+    </div>
+  </section>
+
+  <div class="kpi-grid">
+    <div class="kpi-card blue">
+      <div class="kpi-label">Forecast revenue</div>
+      <div class="kpi-value" id="forecastRevenueValue">$0K</div>
+      <div class="kpi-delta up" id="revenueDelta">Calculating</div>
+      <div class="kpi-icon">$</div>
+    </div>
+    <div class="kpi-card gold">
+      <div class="kpi-label">Units forecasted</div>
+      <div class="kpi-value" id="unitsForecastValue">0</div>
+      <div class="kpi-delta up" id="unitsDelta">Calculating</div>
+      <div class="kpi-icon">#</div>
+    </div>
+    <div class="kpi-card emerald">
+      <div class="kpi-label">Model accuracy</div>
+      <div class="kpi-value" id="accuracyValue">0%</div>
+      <div class="kpi-delta up" id="accuracyDelta">Calculating</div>
+      <div class="kpi-icon">%</div>
+    </div>
+    <div class="kpi-card rose">
+      <div class="kpi-label">Forecast error</div>
+      <div class="kpi-value" id="errorValue">$0K</div>
+      <div class="kpi-delta down" id="errorDelta">Calculating</div>
+      <div class="kpi-icon">+/-</div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <section class="panel panel-primary">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Sales Forecast - 12-Month Horizon</div>
+          <div class="panel-sub">Historical actuals, forecast, and confidence band</div>
+        </div>
+        <div class="range-toggle">
+          <button class="range-btn active" onclick="setRange(this,'all')">All</button>
+          <button class="range-btn" onclick="setRange(this,'6m')">6M</button>
+          <button class="range-btn" onclick="setRange(this,'3m')">3M</button>
+        </div>
+      </div>
+      <div class="forecast-legend">
+        <div class="legend-item"><span class="legend-dot actual"></span>Actual sales</div>
+        <div class="legend-item"><span class="legend-dot forecast"></span>Forecast</div>
+        <div class="legend-item"><span class="legend-dot dashed"></span>Confidence band</div>
+      </div>
+      <div class="chart-wrap h-340">
+        <canvas id="forecastChart" role="img" aria-label="Line chart showing actual sales and 12-month forecast with confidence interval"></canvas>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Revenue by Category</div>
+          <div class="panel-sub">Forecasted contribution</div>
+        </div>
+      </div>
+      <div class="chart-wrap h-200">
+        <canvas id="donutChart" role="img" aria-label="Donut chart showing revenue split by product category"></canvas>
+      </div>
+      <div class="product-list">
+        <div class="product-item">
+          <div class="product-top"><span class="product-name">Electronics</span><span class="product-val">$2.02M</span></div>
+          <div class="progress-track"><div class="progress-fill blue-fill" style="width:42%"></div></div>
+        </div>
+        <div class="product-item">
+          <div class="product-top"><span class="product-name">Apparel</span><span class="product-val">$1.16M</span></div>
+          <div class="progress-track"><div class="progress-fill violet-fill" style="width:24%"></div></div>
+        </div>
+        <div class="product-item">
+          <div class="product-top"><span class="product-name">Home & Garden</span><span class="product-val">$917K</span></div>
+          <div class="progress-track"><div class="progress-fill green-fill" style="width:19%"></div></div>
+        </div>
+        <div class="product-item">
+          <div class="product-top"><span class="product-name">Other</span><span class="product-val">$723K</span></div>
+          <div class="progress-track"><div class="progress-fill amber-fill" style="width:15%"></div></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="bottom-grid">
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Monthly Forecast Detail</div>
+          <div class="panel-sub">Next 6 months</div>
+        </div>
+        <div class="chip active">Units</div>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Forecast</th>
+            <th>vs prior</th>
+          </tr>
+        </thead>
+        <tbody id="monthlyForecastBody"></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Model Error Analysis</div>
+          <div class="panel-sub">Held-out validation set</div>
+        </div>
+      </div>
+      <div class="error-grid">
+        <div>
+          <div class="error-row"><span class="error-label">MAPE</span><span class="error-val" id="mapeValue">0%</span></div>
+          <div class="error-bar-wrap"><div class="error-bar green-fill" id="mapeBar"></div></div>
+        </div>
+        <div>
+          <div class="error-row"><span class="error-label">MAE</span><span class="error-val" id="maeValue">$0K</span></div>
+          <div class="error-bar-wrap"><div class="error-bar blue-fill" id="maeBar"></div></div>
+        </div>
+        <div>
+          <div class="error-row"><span class="error-label">RMSE</span><span class="error-val" id="rmseValue">$0K</span></div>
+          <div class="error-bar-wrap"><div class="error-bar amber-fill" id="rmseBar"></div></div>
+        </div>
+        <div>
+          <div class="error-row"><span class="error-label">R2 score</span><span class="error-val" id="r2Value">0.000</span></div>
+          <div class="error-bar-wrap"><div class="error-bar violet-fill" id="r2Bar"></div></div>
+        </div>
+      </div>
+      <div class="chart-wrap h-200">
+        <canvas id="residualChart" role="img" aria-label="Bar chart of model residuals by month"></canvas>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Seasonal Index</div>
+          <div class="panel-sub">Relative strength vs annual average</div>
+        </div>
+      </div>
+      <div class="month-grid">
+        <div class="month-cell below"><div class="m-label">Jan</div><div class="m-val">0.00</div></div>
+        <div class="month-cell below"><div class="m-label">Feb</div><div class="m-val">0.00</div></div>
+        <div class="month-cell at"><div class="m-label">Mar</div><div class="m-val">0.00</div></div>
+        <div class="month-cell above"><div class="m-label">Apr</div><div class="m-val">0.00</div></div>
+        <div class="month-cell above"><div class="m-label">May</div><div class="m-val">0.00</div></div>
+        <div class="month-cell above"><div class="m-label">Jun</div><div class="m-val">0.00</div></div>
+        <div class="month-cell at"><div class="m-label">Jul</div><div class="m-val">0.00</div></div>
+        <div class="month-cell above"><div class="m-label">Aug</div><div class="m-val">0.00</div></div>
+        <div class="month-cell above"><div class="m-label">Sep</div><div class="m-val">0.00</div></div>
+        <div class="month-cell above"><div class="m-label">Oct</div><div class="m-val">0.00</div></div>
+        <div class="month-cell above"><div class="m-label">Nov</div><div class="m-val">0.00</div></div>
+        <div class="month-cell above"><div class="m-label">Dec</div><div class="m-val">0.00</div></div>
+      </div>
+      <div class="season-key">
+        <span class="key-above">Above average</span>
+        <span class="key-at">At average</span>
+        <span class="key-below">Below average</span>
+      </div>
+    </section>
+  </div>
+
+  <div class="main-grid">
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Trend Decomposition</div>
+          <div class="panel-sub">Observed, trend, and seasonally adjusted sales</div>
+        </div>
+        <div class="panel-actions">
+          <button class="chip active">All</button>
+          <button class="chip">Trend</button>
+          <button class="chip">Seasonal</button>
+        </div>
+      </div>
+      <div class="chart-wrap h-240">
+        <canvas id="decompChart" role="img" aria-label="Multi-line chart showing trend decomposition of sales data"></canvas>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Business Insights</div>
+          <div class="panel-sub">Model-driven planning signals</div>
+        </div>
+      </div>
+      <div class="insight-list">
+        <div class="insight-card ok">
+          <div class="i-title">Strong Q4 signal</div>
+          <div class="i-body">Nov-Dec demand remains the largest seasonal lift. Inventory should be secured 6-8 weeks before the peak.</div>
+        </div>
+        <div class="insight-card warn">
+          <div class="i-title">Jan-Feb trough</div>
+          <div class="i-body">Early Q1 demand softens. Promotions and lean replenishment can reduce excess stock after the holiday cycle.</div>
+        </div>
+        <div class="insight-card info">
+          <div class="i-title">Electronics upside</div>
+          <div class="i-body">Category mix shows electronics as the largest revenue driver, so launch timing should be reflected in scenario planning.</div>
+        </div>
+        <div class="insight-card ok">
+          <div class="i-title">Stable validation</div>
+          <div class="i-body">The holdout metrics provide a quick read on planning reliability before using the forecast for staffing or cash flow.</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <div class="footer-text" id="footerText">Preparing model run</div>
+    <div class="footer-badges">
+      <span class="model-badge" id="modelType">Regression</span>
+      <span class="model-badge" id="modelWindow">Seasonality</span>
+    </div>
+  </footer>
+</div>
+</body>
+</html>

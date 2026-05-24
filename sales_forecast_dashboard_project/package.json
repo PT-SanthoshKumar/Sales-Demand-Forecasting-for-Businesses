@@ -1,0 +1,13 @@
+{
+  "name": "sales_forecast_dashboard_project",
+  "version": "1.0.0",
+  "description": "This project demonstrates a simple sales forecasting system using historical business data and a time-series-aware machine learning pipeline.",
+  "main": "charts.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
